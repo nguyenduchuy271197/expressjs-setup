@@ -3,8 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const morganMiddleware = require("./config/morgan");
 const helmet = require("helmet");
-const axios = require("axios");
-const logger = require("./config/logger");
+const { errorHandler } = require("./middlewares/error");
+const routes = require("./routes/v1");
 
 const app = express();
 
@@ -28,19 +28,8 @@ app.get("/", (req, res) => {
   res.send("Hello World!!!!!");
 });
 
-app.get("/crypto", async (req, res) => {
-  try {
-    const response = await axios.get(
-      "https://api2.binance.com/api/v3/ticker/24hr"
-    );
+app.use("/api/v1", routes);
 
-    const tickerPrice = response.data;
-
-    res.json(tickerPrice);
-  } catch (err) {
-    logger.error(err);
-    res.status(500).send("Internal server error");
-  }
-});
+app.use(errorHandler);
 
 module.exports = app;
