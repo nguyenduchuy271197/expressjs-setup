@@ -1,35 +1,25 @@
 const logger = require("./logger");
 const morgan = require("morgan");
 
-// const morganMiddleware = morgan(
-//   function (tokens, req, res) {
-//     return JSON.stringify({
-//       method: tokens.method(req, res),
-//       url: tokens.url(req, res),
-//       status: Number.parseFloat(tokens.status(req, res)),
-//       content_length: tokens.res(req, res, "content-length"),
-//       response_time: Number.parseFloat(tokens["response-time"](req, res)),
-//     });
-//   },
-//   {
-//     stream: {
-//       // Configure Morgan to use our custom logger with the http severity
-//       write: (message) => {
-//         const data = JSON.parse(message);
-//         logger.http(`incoming-request`, data);
-//       },
-//     },
-//   }
-// );
+const stream = {
+  // Use the http severity
+  write: (message) => logger.http(message.trim()),
+};
+
+const skip = () => {
+  const env = process.env.NODE_ENV || "development";
+  return env !== "development";
+};
 
 const morganMiddleware = morgan(
-  ":method :url :status :res[content-length] - :response-time ms",
-  {
-    stream: {
-      // Configure Morgan to use our custom logger with the http severity
-      write: (message) => logger.http(message.trim()),
-    },
-  }
+  // Define message format string (this is the default one).
+  // The message format is made from tokens, and each token is
+  // defined inside the Morgan library.
+  // You can create your custom token to show what do you want from a request.
+  ":remote-addr :method :url :status :res[content-length] - :response-time ms",
+  // Options: in this case, I overwrote the stream and the skip logic.
+  // See the methods above.
+  { stream, skip }
 );
 
 module.exports = morganMiddleware;

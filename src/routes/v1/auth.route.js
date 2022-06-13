@@ -10,7 +10,7 @@ router.post(
   validate(authValidation.register),
   authController.register
 );
-// router.post("/login", authController.login);
-// router.post("/logout", authController.logout);
+router.post("/login", validate(authValidation.login), authController.login);
+router.post("/logout", validate(authValidation.logout), authController.logout);
 
 module.exports = router;

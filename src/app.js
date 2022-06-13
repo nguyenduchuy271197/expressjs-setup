@@ -1,9 +1,10 @@
 require("dotenv").config();
+require("express-async-errors");
 const express = require("express");
 const cors = require("cors");
 const morganMiddleware = require("./config/morgan");
 const helmet = require("helmet");
-const { errorHandler } = require("./middlewares/error");
+const { errorHandler, errorConverter } = require("./middlewares/error");
 const routes = require("./routes/v1");
 
 const app = express();
@@ -28,8 +29,18 @@ app.get("/", (req, res) => {
   res.send("Hello World!!!!!");
 });
 
-app.use("/api/v1", routes);
+// v1 api routes
+app.use("/v1", routes);
 
+// send back a 404 error for any unknown api request
+// app.use((req, res, next) => {
+//   next(new ApiError(httpStatus.NOT_FOUND, "Not found"));
+// });
+
+// convert error to ApiError, if needed
+app.use(errorConverter);
+
+// handle error
 app.use(errorHandler);
 
 module.exports = app;
