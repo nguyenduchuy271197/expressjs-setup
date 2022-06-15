@@ -1,11 +1,13 @@
 require("dotenv").config();
 require("express-async-errors");
 const express = require("express");
+const passport = require("passport");
 const cors = require("cors");
 const morganMiddleware = require("./config/morgan");
 const helmet = require("helmet");
 const { errorHandler, errorConverter } = require("./middlewares/error");
 const routes = require("./routes/v1");
+const { jwtStrategy } = require("./config/passport");
 
 const app = express();
 
@@ -24,6 +26,10 @@ app.use(express.urlencoded({ extended: true }));
 // Enable cors
 app.use(cors());
 app.options("*", cors());
+
+// jwt authentication
+app.use(passport.initialize());
+passport.use("jwt", jwtStrategy);
 
 app.get("/", (req, res) => {
   res.send("Hello World!!!!!");

@@ -9,10 +9,10 @@ const defaultRoutes = [
     path: "/auth",
     route: authRoute,
   },
-  // {
-  //   path: "/users",
-  //   route: userRoute,
-  // },
+  {
+    path: "/users",
+    route: userRoute,
+  },
 ];
 
 defaultRoutes.forEach(({ path, route }) => {
